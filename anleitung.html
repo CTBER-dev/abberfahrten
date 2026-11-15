@@ -1,0 +1,352 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Anleitung AbBERfahrt</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="author" content="Christian Timmig (Timmi)">
+<meta name="description" content="Kurzanleitung für AbBERfahrt: Kiez- und Touri-Modus, Widget einrichten, Hilfe für Tester.">
+<!--
+  Anleitung AbBERfahrt – für GitHub Pages (auch als Support-URL im App Store)
+  Autor: Timmi
+-->
+<style>
+  /* Layout: eine ruhige Lesespalte wie die Datenschutzseite, Schritte als echte Abfolge, Widget-Vorschau als Bild aus HTML */
+  :root {
+    --bg: #f5f7f5;
+    --card: #ffffff;
+    --text: #1c2320;
+    --muted: #5b6661;
+    --line: #dde3df;
+    --green: #00825a;
+    --yellow: #f9cc00;
+    --purple: #95276e;
+    --blue: #1f6fd1;
+    --orange: #c46a00;
+    --ui-bg: #eef2ef;
+    --widget: #ffffff;
+    --font-body: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --font-display: "DIN Alternate", "DIN 1451", "Arial Narrow", -apple-system, Arial, sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #111513; --card: #1a201d; --text: #e7ece9; --muted: #a2ada7; --line: #2c3430;
+      --green: #3fbf8a; --blue: #5aa2ff; --orange: #f0a040; --ui-bg: #232b27; --widget: #1f2622;
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #111513; --card: #1a201d; --text: #e7ece9; --muted: #a2ada7; --line: #2c3430;
+    --green: #3fbf8a; --blue: #5aa2ff; --orange: #f0a040; --ui-bg: #232b27; --widget: #1f2622;
+    color-scheme: dark;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font: 17px/1.6 var(--font-body);
+    -webkit-text-size-adjust: 100%;
+  }
+  main {
+    max-width: 760px;
+    margin: 0 auto;
+    padding-block: 32px 64px;
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+  }
+  header { display: flex; align-items: center; gap: 16px; margin-bottom: 24px; }
+  .sign {
+    flex: none; width: 56px; height: 56px; border-radius: 50%;
+    background: var(--yellow); border: 6px solid #00825a;
+    box-shadow: 0 0 0 3px #fff, 0 4px 10px rgba(0,0,0,.25);
+    display: grid; place-items: center; color: #00825a;
+    font: 800 26px/1 var(--font-display);
+  }
+  h1 { font: 700 1.8rem/1.15 var(--font-display); margin: 0; letter-spacing: .01em; text-wrap: balance; }
+  .subtitle { color: var(--muted); margin: 4px 0 0; font-size: .95rem; }
+  h2 {
+    font: 700 1.35rem/1.25 var(--font-display);
+    margin: 40px 0 10px; padding-bottom: 6px;
+    border-bottom: 1px solid var(--line);
+    scroll-margin-top: 16px; text-wrap: balance;
+  }
+  h3 { font-size: 1.05rem; margin: 24px 0 6px; }
+  p, li { max-width: 65ch; }
+  a { color: var(--green); }
+  a:focus-visible, button:focus-visible { outline: 3px solid var(--blue); outline-offset: 2px; border-radius: 4px; }
+  ul, ol { padding-left: 1.3em; }
+  li { margin: 5px 0; }
+  .lead { font-size: 1.08rem; margin: 0 0 20px; }
+  nav.toc { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 8px; }
+  nav.toc a {
+    text-decoration: none; color: var(--text); background: var(--card);
+    border: 1px solid var(--line); border-radius: 999px; padding: 4px 12px; font-size: .9rem;
+  }
+  .ui {
+    display: inline-block; background: var(--ui-bg); border: 1px solid var(--line);
+    border-radius: 6px; padding: 0 6px; font-size: .92em; white-space: nowrap;
+  }
+  .modes { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 12px; margin: 16px 0; }
+  .mode { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; min-width: 0; }
+  .mode h3 { margin: 0 0 4px; }
+  .mode p { margin: 0; color: var(--muted); font-size: .95rem; }
+  ol.steps { counter-reset: s; list-style: none; padding: 0; }
+  ol.steps > li {
+    counter-increment: s; position: relative; padding-left: 44px; margin: 14px 0;
+  }
+  ol.steps > li::before {
+    content: counter(s); position: absolute; left: 0; top: 0;
+    width: 30px; height: 30px; border-radius: 50%;
+    background: var(--green); color: #fff; font-weight: 700;
+    display: grid; place-items: center; font-size: .95rem;
+  }
+  .note {
+    background: var(--card); border: 1px solid var(--line); border-left: 4px solid var(--yellow);
+    border-radius: 10px; padding: 10px 14px; margin: 14px 0; font-size: .95rem;
+  }
+  /* Widget-Vorschau */
+  .previews { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; margin: 16px 0; }
+  figure { margin: 0; min-width: 0; }
+  figcaption { color: var(--muted); font-size: .85rem; margin-top: 6px; }
+  .widget {
+    background: var(--widget); border-radius: 22px; padding: 14px 16px;
+    box-shadow: 0 1px 2px rgba(0,0,0,.08), 0 8px 24px rgba(0,0,0,.10);
+    border: 1px solid var(--line); font-size: 13px; line-height: 1.35;
+    display: grid; gap: 7px;
+  }
+  .w-head { display: flex; align-items: center; gap: 6px; font-weight: 700; font-size: 14px; }
+  .w-head .stand { margin-left: auto; font-weight: 400; font-size: 11px; color: var(--muted); }
+  .w-row { display: flex; align-items: center; gap: 8px; min-width: 0; }
+  .w-row .dir { flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .w-row .min { font-weight: 700; font-variant-numeric: tabular-nums; }
+  .w-row .late { color: #d33; }
+  .badge {
+    background: var(--purple); color: #fff; font-weight: 700; font-size: 12px;
+    border-radius: 5px; padding: 1px 6px; min-width: 38px; text-align: center; font-style: normal;
+  }
+  .badge.s { background: #008d4f; }
+  .walk { color: var(--blue); font-weight: 600; font-size: 12px; margin-left: auto; white-space: nowrap; }
+  .tight { color: var(--orange); }
+  .w-stop { display: grid; gap: 3px; }
+  .w-stop .name { display: flex; font-weight: 700; }
+  .w-deps { display: flex; gap: 12px; flex-wrap: wrap; }
+  .w-deps span { display: inline-flex; gap: 4px; align-items: center; font-weight: 700; font-variant-numeric: tabular-nums; }
+  hr.w { border: 0; border-top: 1px solid var(--line); margin: 0; }
+  .table-wrap { overflow-x: auto; margin: 14px 0; border: 1px solid var(--line); border-radius: 10px; background: var(--card); }
+  table { border-collapse: collapse; width: 100%; min-width: 520px; font-size: .94rem; }
+  th, td { text-align: left; padding: 9px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  tr:last-child td { border-bottom: none; }
+  th { background: color-mix(in srgb, var(--green) 9%, transparent); font-weight: 600; }
+  details { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 10px 14px; margin: 10px 0; }
+  details summary { cursor: pointer; font-weight: 600; }
+  details p { margin: 8px 0 2px; }
+  .contact { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 12px 16px; display: inline-block; }
+  footer { margin-top: 48px; color: var(--muted); font-size: .85rem; border-top: 1px solid var(--line); padding-top: 16px; display: flex; flex-wrap: wrap; gap: 6px 16px; }
+  @media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; } }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <div class="sign" aria-hidden="true">H</div>
+    <div>
+      <h1>Anleitung AbBERfahrt</h1>
+      <p class="subtitle">Abfahrten für Bus und Bahn in Berlin · Version 2.0</p>
+    </div>
+  </header>
+
+  <p class="lead">AbBERfahrt zeigt dir, wann Bus, Tram, U- und S-Bahn in Berlin fahren, in Echtzeit. In zwei
+  Minuten ist alles eingerichtet: App öffnen, Modus wählen, Widget auf den Home-Bildschirm legen.</p>
+
+  <nav class="toc" aria-label="Inhalt">
+    <a href="#modi">Die zwei Modi</a>
+    <a href="#kiez">Kiez-Modus</a>
+    <a href="#touri">Touri-Modus</a>
+    <a href="#widget">Widget einrichten</a>
+    <a href="#tester">Für Tester</a>
+    <a href="#hilfe">Hilfe</a>
+  </nav>
+
+  <h2 id="modi">Die zwei Modi</h2>
+  <p>Oben in der App schaltest du zwischen <span class="ui">Kiez</span> und <span class="ui">Touri</span> um.
+  Das Widget folgt automatisch deiner Wahl.</p>
+  <div class="modes">
+    <div class="mode">
+      <h3>Kiez</h3>
+      <p>Für deine festen Haltestellen zu Hause und auf dem Arbeitsweg. Mit Favoriten, Kurzwahl und Filtern.
+      Kommt ohne Standort aus.</p>
+    </div>
+    <div class="mode">
+      <h3>Touri</h3>
+      <p>Für unterwegs: Haltestellen in deiner Nähe mit Gehzeit, nur Abfahrten, die du zu Fuß noch schaffst,
+      und der Fußweg auf der Karte. Braucht deinen Standort.</p>
+    </div>
+  </div>
+
+  <h2 id="kiez">Kiez-Modus</h2>
+  <ul>
+    <li><strong>Haltestelle suchen:</strong> Tippe auf <span class="ui">🔍</span> und gib einen Namen ein,
+    z. B. „Hauptbahnhof“.</li>
+    <li><strong>Favorit anlegen:</strong> Tippe auf <span class="ui">☆</span>. Favoriten erscheinen oben in der
+    Kurzwahl, zusammen mit deinen letzten 5 Suchen.</li>
+    <li><strong>Haltestelle fürs Widget:</strong> Tippe auf <span class="ui">♡</span>. Die Haltestelle mit dem
+    Herz zeigt das Widget an. Es kann immer nur eine Haltestelle das Herz haben.</li>
+    <li><strong>Filtern:</strong> An großen Haltestellen erscheinen Filter für Verkehrsmittel, Linie und
+    Richtung. Tippe einfach auf die gewünschten Chips.</li>
+    <li><strong>Kurzwahl bearbeiten:</strong> Lange auf einen Chip drücken, um ihn zum Favoriten zu machen, ins
+    Widget zu legen oder aus dem Verlauf zu entfernen.</li>
+  </ul>
+  <p>Rot heißt verspätet, „+3“ ist die Verspätung in Minuten. Ausgefallene Fahrten sind durchgestrichen.</p>
+
+  <h2 id="touri">Touri-Modus</h2>
+  <ol class="steps">
+    <li>Schalte oben auf <span class="ui">Touri</span>. Beim ersten Mal fragt iOS nach deinem Standort. Wähle
+    <span class="ui">Beim Verwenden der App erlauben</span>.</li>
+    <li>Oben erscheinen die Haltestellen in deiner Nähe, sortiert nach Gehzeit, z. B.
+    <span class="ui">Staaken Bhf · 🚶 4 min</span>. Tippe eine an.</li>
+    <li>In der Mitte stehen die Abfahrten. <strong>Ausgegraut</strong> heißt: zu Fuß nicht mehr zu schaffen.
+    <span class="tight"><strong>knapp</strong></span> heißt: höchstens eine Minute Puffer.</li>
+    <li>Unten zeigt die Karte den Fußweg als blaue Linie. <span class="ui">Karten</span> startet die
+    Fußgänger-Navigation in Apple Karten.</li>
+  </ol>
+  <p class="note">Der Touri-Modus findet nur Haltestellen in Berlin und Brandenburg.</p>
+
+  <h2 id="widget">Widget einrichten</h2>
+  <p>So sieht das Widget in mittlerer Größe aus:</p>
+  <div class="previews">
+    <figure>
+      <div class="widget" aria-label="Beispiel: Kiez-Widget">
+        <div class="w-head"><span style="color:var(--purple)">●</span> Egelpfuhlstr. <span class="stand">Stand 08:12 ↻</span></div>
+        <div class="w-row"><span class="badge">M32</span><span class="dir">S+U Rathaus Spandau</span><span class="min">2 min</span></div>
+        <div class="w-row"><span class="badge">M32</span><span class="dir">Staaken, Döberitzer Weg</span><span class="min late">6 min</span></div>
+        <div class="w-row"><span class="badge">M32</span><span class="dir">S+U Rathaus Spandau</span><span class="min">12 min</span></div>
+      </div>
+      <figcaption>Kiez: deine ♥-Haltestelle mit den nächsten Abfahrten</figcaption>
+    </figure>
+    <figure>
+      <div class="widget" aria-label="Beispiel: Touri-Widget">
+        <div class="w-head"><span style="color:var(--blue)">➤</span> In der Nähe <span class="stand">↻</span></div>
+        <div class="w-stop">
+          <div class="name">Staaken Bhf <span class="walk">🚶 4 min</span></div>
+          <div class="w-deps"><span><i class="badge s">S3</i> <b class="tight">5 min</b></span><span><i class="badge">M32</i> 9 min</span><span><i class="badge">137</i> 14 min</span></div>
+        </div>
+        <hr class="w">
+        <div class="w-stop">
+          <div class="name">Am Kurzen Weg <span class="walk">🚶 6 min</span></div>
+          <div class="w-deps"><span><i class="badge">M32</i> 8 min</span><span><i class="badge">M32</i> 18 min</span></div>
+        </div>
+      </div>
+      <figcaption>Touri: Haltestellen in der Nähe, nur erreichbare Abfahrten</figcaption>
+    </figure>
+  </div>
+
+  <h3>Auf den Home-Bildschirm legen</h3>
+  <ol class="steps">
+    <li>Drücke lange auf eine freie Stelle des Home-Bildschirms, bis die Apps wackeln.</li>
+    <li>Tippe oben links auf <span class="ui">Bearbeiten</span> und dann auf <span class="ui">Widget hinzufügen</span>.
+    Bei älteren iOS-Versionen heißt der Knopf <span class="ui">+</span>.</li>
+    <li>Suche nach <strong>AbBERfahrt</strong>. Wische zur gewünschten Größe: klein, mittel oder groß.</li>
+    <li>Tippe auf <span class="ui">Widget hinzufügen</span>, schiebe es an seinen Platz und tippe auf
+    <span class="ui">Fertig</span>.</li>
+  </ol>
+
+  <h3>Einstellen</h3>
+  <p>Drücke lange auf das Widget und wähle <span class="ui">Widget bearbeiten</span>:</p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Einstellung</th><th>Was sie bewirkt</th></tr></thead>
+      <tbody>
+        <tr><td>Modus</td><td><strong>Wie in der App</strong> (Standard): folgt dem Umschalter in der App. Oder fest
+        <strong>Kiez</strong> bzw. <strong>Touri</strong>, z. B. für ein zweites Widget.</td></tr>
+        <tr><td>Haltestelle</td><td><strong>♥ Haltestelle aus der App</strong> (Standard): folgt dem Herz in der App.
+        Oder eine feste Haltestelle über die Suche. Nur im Kiez-Modus.</td></tr>
+        <tr><td>Verkehrsmittel</td><td>z. B. nur Bus und Tram. Leer lassen für alle.</td></tr>
+        <tr><td>Linien</td><td>z. B. „M32, 137“. Leer lassen für alle.</td></tr>
+        <tr><td>Richtung enthält</td><td>z. B. „Rathaus Spandau“. Leer lassen für alle.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>Touri-Widget: Standort freigeben</h3>
+  <p>Das Widget braucht eine eigene Freigabe, sonst zeigt es „Standort nicht freigegeben“:</p>
+  <ol class="steps">
+    <li>Öffne die iPhone-<span class="ui">Einstellungen</span> → <span class="ui">Apps</span> →
+    <span class="ui">AbBERfahrt</span> → <span class="ui">Standort</span>.
+    Bei älteren iOS-Versionen findest du AbBERfahrt direkt in der Liste der Einstellungen.</li>
+    <li>Wähle <span class="ui">Beim Verwenden der App oder Widgets</span>.</li>
+  </ol>
+
+  <h3>Auf den Sperrbildschirm legen</h3>
+  <ol class="steps">
+    <li>Entsperre das iPhone mit Face ID, bleib aber auf dem Sperrbildschirm. Drücke dort lange und tippe auf
+    <span class="ui">Anpassen</span> → <span class="ui">Sperrbildschirm</span>.</li>
+    <li>Tippe auf das Feld unter der Uhrzeit und wähle AbBERfahrt: rechteckig (Haltestelle mit 2 Abfahrten)
+    oder rund (Minuten bis zur nächsten Abfahrt bzw. Gehzeit). Über der Uhrzeit passt die einzeilige Variante.</li>
+    <li>Tippe auf <span class="ui">Fertig</span>.</li>
+  </ol>
+
+  <h3>Aktualisieren</h3>
+  <ul>
+    <li>Die Minuten zählen von selbst herunter. Neue Daten holt iOS etwa alle 10 bis 15 Minuten.</li>
+    <li>Tippe auf <span class="ui">↻</span> für sofort neue Daten. Auch das Öffnen der App aktualisiert das Widget.</li>
+    <li>Wird <span class="tight"><strong>Stand</strong></span> orange, sind die Daten älter als 20 Minuten.</li>
+    <li>Ein Tipp aufs Widget öffnet die App bei dieser Haltestelle, im Touri-Modus mit dem Fußweg.</li>
+  </ul>
+
+  <h2 id="tester">Für Tester</h2>
+  <ol class="steps">
+    <li>Installiere <strong>TestFlight</strong> aus dem App Store.</li>
+    <li>Öffne die Einladung per E-Mail oder Link und tippe auf <span class="ui">Annehmen</span> und
+    <span class="ui">Installieren</span>.</li>
+    <li>Fehler gefunden? Mach ein Bildschirmfoto und tippe auf <span class="ui">Teilen</span> →
+    <span class="ui">Beta-Feedback senden</span>. Oder öffne TestFlight → AbBERfahrt →
+    <span class="ui">Feedback senden</span>.</li>
+  </ol>
+  <p>Bitte teste vor allem:</p>
+  <ul>
+    <li>Widget in allen drei Größen und auf dem Sperrbildschirm, im Kiez- und im Touri-Modus</li>
+    <li>Herz setzen in der App: wechselt das Widget zur neuen Haltestelle?</li>
+    <li>Touri-Modus unterwegs: stimmen Gehzeit und „knapp“ ungefähr?</li>
+    <li>Große Haltestellen wie Hauptbahnhof oder Alexanderplatz mit den Filtern</li>
+  </ul>
+  <p class="note">Eine TestFlight-Version läuft 90 Tage. Updates kommen automatisch über TestFlight.</p>
+
+  <h2 id="hilfe">Hilfe</h2>
+  <details>
+    <summary>Das Widget zeigt einen alten Stand</summary>
+    <p>Tippe auf ↻ im Widget oder öffne kurz die App. iOS lädt Widgets nicht jede Minute neu, um den Akku zu schonen.</p>
+  </details>
+  <details>
+    <summary>Das Widget zeigt nicht die Haltestelle mit dem Herz</summary>
+    <p>Wahrscheinlich ist im Widget eine feste Haltestelle eingestellt. Lange drücken → Widget bearbeiten →
+    Haltestelle → „♥ Haltestelle aus der App“.</p>
+  </details>
+  <details>
+    <summary>Touri-Widget: „Standort nicht freigegeben“</summary>
+    <p>Stelle in den Einstellungen unter AbBERfahrt → Standort „Beim Verwenden der App oder Widgets“ ein
+    (siehe <a href="#widget">Widget einrichten</a>).</p>
+  </details>
+  <details>
+    <summary>„Keine Haltestelle in der Nähe“</summary>
+    <p>Der Touri-Modus sucht im Umkreis von 1,2 km und nur in Berlin und Brandenburg. Außerhalb davon nutze den
+    Kiez-Modus mit der Suche.</p>
+  </details>
+  <details>
+    <summary>„Keine Verbindung“ oder fehlende Abfahrten</summary>
+    <p>Der Fahrplandienst ist manchmal kurz nicht erreichbar. Das Widget zeigt dann die zuletzt geladenen
+    Abfahrten. Versuch es nach ein paar Minuten noch einmal.</p>
+  </details>
+
+  <h3>Kontakt</h3>
+  <p class="contact">Christian Timmig · <a href="mailto:homepage@timmi.nl">homepage@timmi.nl</a></p>
+
+  <footer>
+    <span>AbBERfahrt · © 2026 Christian Timmig (Timmi)</span>
+    <a href="index.html">Datenschutzerklärung</a>
+    <span>Fahrplandaten: VBB über transport.rest</span>
+  </footer>
+</main>
+</body>
+</html>
